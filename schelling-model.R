@@ -96,20 +96,7 @@ unhappy.agents <- function(grid, min.similarity){
 # assigned to a new empty location. a new grid is generated to reflect all of
 # the moves that took place.
 one.round <- function(grid, min.similarity){
-  empty <- empty.locations(grid)
-  unhappy <- unhappy.agents(grid, min.similarity)
-  if(length(unhappy)==0){ 
-    return(grid) 
-  } else {
-    new.grid <- grid
-    empty <- empty[sample(1:nrow(empty)),]
-    for(i in 1:nrow(unhappy)){
-      if(i > nrow(empty)){ break; }
-      new.grid[empty[i,1],empty[i,2]] <- grid[unhappy[i,1],unhappy[i,2]]
-      new.grid[unhappy[i,1],unhappy[i,2]] <- 0
-    }
-    return(new.grid)
-  }
+  
 }
 
 # running the simulation ####
