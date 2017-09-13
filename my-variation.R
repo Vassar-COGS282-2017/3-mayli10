@@ -1,0 +1,1 @@
+# use this file to generate your variation on the schelling model
