@@ -4,7 +4,8 @@ cols <- 50
 proportion.group.1 <- .5 # proportion of red agents
 empty <- .2 # proportion of grid that will be empty space
 min.similarity <- 3/8 # minimum proportion of neighbors that are the same type to not move
-
+# if u change it to 5/8 then there's empty space btwn all the neighborhoods
+# if u change proportion of agents to .8 then the red agents may take over and it may not stabilize
 # create.grid ####
 # generates a rows x column matrix and randomly places the initial population
 # values in the matrix are either 0, 1, or 2
@@ -14,6 +15,8 @@ create.grid <- function(rows, cols, proportion.group.1, empty){
   pop.size.group.1 <- (rows*cols)*(1-empty)*proportion.group.1
   pop.size.group.2 <- (rows*cols)*(1-empty)*(1-proportion.group.1)
   
+  # takes first value and replicates it a number of times, generating 1s 2s and 0s 
+  # (0s are empty spaces that are left)
   initial.population <- sample(c(
     rep(1, pop.size.group.1), 
     rep(2, pop.size.group.2), 
@@ -24,7 +27,7 @@ create.grid <- function(rows, cols, proportion.group.1, empty){
 
 # visualize.grid ####
 # outputs a visualization of the grid, with red squares representing group 1,
-# blue squares group 2, and black squares empty locations.
+# blue squares group 2, and black squares empty locations. r function called image
 visualize.grid <- function(grid){
   image(grid, col=c('black','red','blue'), xaxs=NULL, yaxs=NULL, xaxt='n', yaxt='n')
 }
@@ -96,7 +99,16 @@ unhappy.agents <- function(grid, min.similarity){
 # assigned to a new empty location. a new grid is generated to reflect all of
 # the moves that took place.
 one.round <- function(grid, min.similarity){
-  
+  new.grid <- grid
+  empty.spaces <- empty.locations(grid)
+  unhappy <- unhappy.agents(grid, min.similarity)
+  empty.spaces <- empty.spaces[ sample(1:nrow(empty.spaces)), ]
+  for(i in 1:nrow(empty.spaces)) {
+    if(i > nrow(unhappy)){ break; }
+    grid[empty.spaces[i,1], empty.spaces[i,2]] <- grid[unhappy[i,1], unhappy[i,2]]
+    grid[unhappy[i,1], unhappy[i,2]] <- 0
+  }
+  return(grid)
 }
 
 # running the simulation ####
