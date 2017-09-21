@@ -1,0 +1,6 @@
+library(stringr)
+
+target <- "cognitive science"
+
+pop.size <- 200
+
