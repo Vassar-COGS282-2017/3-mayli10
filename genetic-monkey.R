@@ -38,7 +38,7 @@ next.generation <- function(population, mutation.rate, target) {
   next.pop <- population
   pop.fitness <- fitness(population, target)
   for(i in 1:nrow(next.pop)) {
-    parent <- sample(1:length(pop.fitness), 1, prob=pop.fitness), 
+    parent <- sample(1:length(pop.fitness), 1, prob=pop.fitness)
     child <- random.mutation(parent, mutation.rate)
     next.pop[i,] <- child
   }
