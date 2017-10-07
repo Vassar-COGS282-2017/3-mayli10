@@ -5,7 +5,7 @@ rows <- 100
 cols <- 100
 proportion.group.1 <- .4 # proportion of red agents
 proportion.group.2 <- .2 # proportion of blue agents
-empty <- .3 # proportion of grid that will be empty space
+empty <- .1 # proportion of grid that will be empty space
 min.similarity <- .1 # minimum proportion of neighbors that are the same type to not move
 max.similarity <- .3 # maximum proportion of neighbors that are the same type to not move
 # if u change it to 5/8 then there's empty space btwn all the neighborhoods
@@ -35,7 +35,7 @@ create.grid <- function(rows, cols, proportion.group.1, proportion.group.2, empt
 # outputs a visualization of the grid, with red squares representing group 1,
 # blue squares group 2, and black squares empty locations. r function called image
 visualize.grid <- function(grid){
-  image(grid, col=c('yellow','black','red','blue'), xaxs=NULL, yaxs=NULL, xaxt='n', yaxt='n')
+  image(grid, col=c('black','blue','red','yellow'), xaxs=NULL, yaxs=NULL, xaxt='n', yaxt='n')
 }
 
 # empty.locations ####
@@ -115,6 +115,8 @@ one.round <- function(grid, min.similarity, max.similarity){
   }
   return(grid)
 }
+layout(1:1)
+visualize.grid(grid)
 
 # running the simulation ####
 done <- FALSE # a variable to keep track of whether the simulation is complete
