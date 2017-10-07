@@ -3,11 +3,11 @@
 # model parameters ####
 rows <- 100
 cols <- 100
-proportion.group.1 <- .4 # proportion of red agents
-proportion.group.2 <- .2 # proportion of blue agents
-empty <- .1 # proportion of grid that will be empty space
-min.similarity <- .1 # minimum proportion of neighbors that are the same type to not move
-max.similarity <- .3 # maximum proportion of neighbors that are the same type to not move
+proportion.group.1 <- .25 # proportion of red agents
+proportion.group.2 <- .25 # proportion of blue agents
+empty <- .25 # proportion of grid that will be empty space
+min.similarity <- .09 # minimum proportion of neighbors that are the same type to not move
+max.similarity <- .91 # maximum proportion of neighbors that are the same type to not move
 # if u change it to 5/8 then there's empty space btwn all the neighborhoods
 # if u change proportion of agents to .8 then the red agents may take over and it may not stabilize
 # create.grid ####
@@ -53,7 +53,9 @@ empty.locations <- function(grid){
 # manually in case the grid has an even number of rows or 
 # columns
 similarity.to.center <- function(grid.subset, center.val){
-  if(center.val == 0){ return(NA) }
+  if(center.val == 0){ 
+    return(NA) 
+    }
   same <- sum(grid.subset==center.val) - 1
   not.same <- sum(grid.subset!=center.val) - sum(grid.subset==0)
   return(same/(same+not.same))
@@ -92,7 +94,7 @@ unhappy.agents <- function(grid, min.similarity, max.similarity){
       if(is.na(similarity.score)){
         grid.copy[row,col] <- NA
       } else {
-        grid.copy[row,col] <- (similarity.score >= min.similarity && similarity.score <= max.similarity)
+        grid.copy[row,col] <- ((similarity.score >= min.similarity) && (similarity.score <= max.similarity))
       }
     }
   }
@@ -105,22 +107,25 @@ unhappy.agents <- function(grid, min.similarity, max.similarity){
 # assigned to a new empty location. a new grid is generated to reflect all of
 # the moves that took place.
 one.round <- function(grid, min.similarity, max.similarity){
-  empty.spaces <- empty.locations(grid)
-  unhappy <- unhappy.agents(grid, min.similarity, max.similarity)
-  empty.spaces <- empty.spaces[ sample(1:nrow(empty.spaces)), ]
-  for(i in 1:nrow(empty.spaces)) {
-    if(i > nrow(unhappy)){ break; }
-    grid[empty.spaces[i,1], empty.spaces[i,2]] <- grid[unhappy[i,1], unhappy[i,2]]
-    grid[unhappy[i,1], unhappy[i,2]] <- 0
+  new.grid <- grid
+  empty.spaces <- empty.locations(new.grid)
+  unhappy <- unhappy.agents(new.grid, min.similarity, max.similarity)
+  new.spaces <- empty.spaces[ sample(1:nrow(empty.spaces), nrow(empty.spaces), replace = FALSE),]
+  for(i in 1:nrow(new.spaces)) {
+    if(i > nrow(unhappy)){ 
+      break; 
+      }
+    new.grid[new.spaces[i,1], new.spaces[i,2]] <- new.grid[unhappy[i,1], unhappy[i,2]]
+    new.grid[unhappy[i,1], unhappy[i,2]] <- 0
   }
-  return(grid)
+  return(new.grid)
 }
 layout(1:1)
-visualize.grid(grid)
 
 # running the simulation ####
 done <- FALSE # a variable to keep track of whether the simulation is complete
 grid <- create.grid(rows, cols, proportion.group.1, proportion.group.2, empty)
+visualize.grid(grid)
 seg.tracker <- c(segregation(grid)) # keeping a running tally of the segregation scores for each round
 while(!done){
   new.grid <- one.round(grid, min.similarity, max.similarity) # run one round of the simulation, and store output in new.grid
@@ -131,6 +136,7 @@ while(!done){
     grid <- new.grid # otherwise, replace grid with new.grid, and loop again.
   }
 }
-layout(1:3) # change graphics device to have two plots
+layout(1:1) # change graphics device to have two plots
 visualize.grid(grid) # show resulting grid
 plot(seg.tracker) # plot segregation over time
+
